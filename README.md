@@ -4,7 +4,6 @@ This project implements basic frictionless dataset functionality base on the spe
 In particular the dataset metadata
 ```json
 {
-
   "name" : "a-unique-human-readable-and-url-usable-identifier",
   "title" : "A nice title",
   "licenses" : [],
@@ -14,6 +13,5 @@ In particular the dataset metadata
     
     }
   ],
-
 }
 ```
