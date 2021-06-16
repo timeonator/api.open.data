@@ -48,8 +48,12 @@ app.get('/datapackage/:name',(req,res) => {
             useUnifiedTopology: true,
         })
         const db = client.db('openData');
-    var dp = getDataPackage(req.params.name)
-    res.json(dp)
+        const dp = database.collection('datapackages');
+        const query={name:"datapackage-test-2"}
+        const datapackage = dp.findOne(query)
+        
+//    var dp = getDataPackage(req.params.name)
+    res.json(datapackage)
 } catch(error) {
     res.status(500).send("Wrap Something went wrong")
 }
