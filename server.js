@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const { MongoClient } = require("mongodb");
 
 const HOST='localhost'
 const PORT=8000
@@ -14,6 +15,19 @@ DATA=  [
         "resources": [],
     }
 ]
+const wrapArticleDB = async (operation) => {
+    try {
+        const client = await MongoClient.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
+        const db = client.db('openData');
+        operation(db);         
+    } catch(error) {
+        res.status(500).send("Wrap Something went wrong")
+    }
+}
+
 function getDataPackage(name) {
     return(DATA[0]);
 }
@@ -28,6 +42,15 @@ app.get('/', (req,resp) => {
 
 app.get('/datapackage/:name',(req,res) => {
     console.log(req)
+    try {
+        const client = MongoClient.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
+        const db = client.db('openData');
     var dp = getDataPackage(req.params.name)
     res.json(dp)
+} catch(error) {
+    res.status(500).send("Wrap Something went wrong")
+}
 })
