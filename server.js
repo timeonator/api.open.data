@@ -4,6 +4,7 @@ const { MongoClient } = require("mongodb");
 
 const HOST='localhost'
 const PORT=8000
+const uri = 'mongodb://localhost:27017';
 
 DATA=  [
     {
@@ -18,8 +19,8 @@ DATA=  [
 const wrapArticleDB = async (operation) => {
     try {
         const client = await MongoClient.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
+            // useNewUrlParser: true,
+            // useUnifiedTopology: true,
         })
         const db = client.db('openData');
         operation(db);         
@@ -41,20 +42,28 @@ app.get('/', (req,resp) => {
 })
 
 app.get('/datapackage/:name',(req,res) => {
-    console.log(req)
-    try {
-        const client = MongoClient.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        })
-        const db = client.db('openData');
-        const dp = database.collection('datapackages');
-        const query={name:"datapackage-test-2"}
-        const datapackage = dp.findOne(query)
+    wrapArticleDB(async (db) => {
+        const packageName = req.params.name;
+        const dp = await db.collection('datapackages').findOne({name : packageName});
+
+        res.status(200).send(dp);
+    });
+    // console.log(req)
+    // try {
+    //     const client = MongoClient.connect(uri, {
+    //         useNewUrlParser: true,
+    //         useUnifiedTopology: true,
+    //     })
+
+    // const db = client.db('openData');
+    // const dp = database.collection('datapackages');
+    // const query={name:"datapackage-test-2"}
+//     const datapackage = dp.findOne(query)
         
-//    var dp = getDataPackage(req.params.name)
-    res.json(datapackage)
-} catch(error) {
-    res.status(500).send("Wrap Something went wrong")
-}
+// //    var dp = getDataPackage(req.params.name)
+//     res.json(datapackage)
+    // } catch(error) {
+    //     console.log("Error", error)
+    //     res.status(500).send("Something went wrong")
+    // }
 })
