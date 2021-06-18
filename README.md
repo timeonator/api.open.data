@@ -1,4 +1,4 @@
-# open-dataset-backend
+# api.open-data
 ## Overview
 This project implements a API for creating ane maintaining frictionless datapackage.json files base on the specification of that file format found at https://specs.frictionlessdata.io/data-package/#descriptor
 Currnet work is on a skeleton of the datapackage.json which supports the most fundamental features of the specifictaion
