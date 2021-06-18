@@ -16,11 +16,11 @@ DATA=  [
         "resources": [],
     }
 ]
-const wrapArticleDB = async (operation) => {
+const wrapDB = async (operation) => {
     try {
         const client = await MongoClient.connect(uri, {
-            // useNewUrlParser: true,
-            // useUnifiedTopology: true,
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
         })
         const db = client.db('openData');
         operation(db);         
@@ -42,28 +42,14 @@ app.get('/', (req,resp) => {
 })
 
 app.get('/datapackage/:name',(req,res) => {
-    wrapArticleDB(async (db) => {
+    wrapDB(async (db) => {
         const packageName = req.params.name;
-        const dp = await db.collection('datapackages').findOne({name : packageName});
+        const dp = await db
+            .collection('datapackages')
+            .findOne({name : packageName});
+        console.log(dp)
 
-        res.status(200).send(dp);
-    });
-    // console.log(req)
-    // try {
-    //     const client = MongoClient.connect(uri, {
-    //         useNewUrlParser: true,
-    //         useUnifiedTopology: true,
-    //     })
-
-    // const db = client.db('openData');
-    // const dp = database.collection('datapackages');
-    // const query={name:"datapackage-test-2"}
-//     const datapackage = dp.findOne(query)
-        
-// //    var dp = getDataPackage(req.params.name)
-//     res.json(datapackage)
-    // } catch(error) {
-    //     console.log("Error", error)
-    //     res.status(500).send("Something went wrong")
-    // }
+        if(dp == null) {res.status(200).send(dp)}  
+        else {res.status(200).send(dp);}
+    })
 })
