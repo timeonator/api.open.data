@@ -32,7 +32,7 @@ const wrapDB = async (operation) => {
 function getDataPackage(name) {
     return(DATA[0]);
 }
-
+app.use(express.json())
 app.listen(PORT, ()=>{
     console.log('listening on port ', PORT)
 })
@@ -51,5 +51,20 @@ app.get('/datapackage/:name',(req,res) => {
 
         if(dp == null) {res.status(200).send(dp)}  
         else {res.status(200).send(dp);}
+    })
+})
+
+app.post('/datapackage',(req,res) => {
+    wrapDB(async (db) => {
+
+        console.log(req.body)
+        const dp = await db
+            .collection('datapackages')
+            .insertOne(req.body);
+        res.status(200).json(req.body)
+
+
+        // if(dp == null) {res.status(200).send(dp)}  
+        // else {res.status(200).send(dp);}
     })
 })
