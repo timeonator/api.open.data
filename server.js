@@ -43,6 +43,21 @@ app.get('/', (req,resp) => {
     resp.send('open dataset: Hello')
 })
 
+app.get('/datapackages/',(req,res) => {
+    wrapDB(async (db) => {
+        const query = {_id: {$exist: true}}
+        const cursor = await db
+            .collection('datapackages')
+            .find()
+            .toArray();
+
+        const result = Object.assign({},...cursor);
+        console.log(result)
+        if(cursor == null) {res.status(200).send(null)}  
+        else {res.status(200).send({...cursor});}
+    })
+})
+
 app.get('/datapackage/:name',(req,res) => {
     wrapDB(async (db) => {
         const packageName = req.params.name;
