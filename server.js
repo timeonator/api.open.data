@@ -1,7 +1,6 @@
 const express = require('express')
 const cors = require('cors')
 const app = express()
-app.use(cors())
 const { MongoClient } = require("mongodb");
 
 const HOST='localhost'
@@ -30,10 +29,11 @@ const wrapDB = async (operation) => {
         res.status(500).send("Wrap Something went wrong")
     }
 }
-
-function getDataPackage(name) {
-    return(DATA[0]);
-}
+var corsOptions = {
+    origin: 'http://localhost:8080',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }
+app.use(cors(corsOptions))
 app.use(express.json())
 app.listen(PORT, ()=>{
     console.log('listening on port ', PORT)
@@ -43,18 +43,16 @@ app.get('/', (req,resp) => {
     resp.send('open dataset: Hello')
 })
 
-app.get('/datapackages/',(req,res) => {
+app.get('/datapackages',cors(corsOptions),(req,res) => {
     wrapDB(async (db) => {
         const query = {_id: {$exist: true}}
         const cursor = await db
             .collection('datapackages')
             .find()
             .toArray();
-
-        const result = Object.assign({},...cursor);
-        console.log(result)
+        console.log(cursor);
         if(cursor == null) {res.status(200).send(null)}  
-        else {res.status(200).send({...cursor});}
+        else {res.status(200).send(cursor);}
     })
 })
 
